@@ -50,6 +50,29 @@
     link.href = canvas.toDataURL("image/png");
     link.click();
   }
+
+  // === Интеграция с GitHub API (Стабильный вариант) ===
+  let repoStats = $state("Загрузка данных...");
+
+  async function fetchGitHubData() {
+    try {
+      // Запрос информации о репозитории
+      const response = await fetch(
+        "https://api.github.com/repos/zdertis/business-cards-generator",
+      );
+      const data = await response.json();
+
+      // Выводим информацию из JSON (например, количество звезд или язык)
+      repoStats = `Проект на GitHub: ${data.stargazers_count} ⭐ | Язык: ${data.language}`;
+    } catch (e) {
+      repoStats = "Статус репозитория: Доступен";
+    }
+  }
+
+  $effect(() => {
+    fetchGitHubData();
+  });
+
 </script>
 
 <div class="app">
@@ -124,6 +147,10 @@
   </div>
 </div>
 
+<div class="api-footer">
+  <p>{repoStats}</p>
+</div>
+
 <style>
   /* Глобальный сброс */
   *,
@@ -134,17 +161,17 @@
 
   .app {
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; */
     background: #0f172a;
   }
 
   .content {
     flex: 1;
     width: 100%;
-    padding: 1rem 1.5rem;       /* уменьшили, чтобы не вылезало */
+    padding: 1rem 1.5rem; /* уменьшили, чтобы не вылезало */
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -167,7 +194,7 @@
   .workspace {
     flex: 1;
     display: flex;
-    gap: 1rem;                  /* уменьшили gap */
+    gap: 1rem; /* уменьшили gap */
     overflow: hidden;
     min-height: 0;
   }
@@ -182,7 +209,7 @@
   }
 
   .sidebar-panel {
-    flex: 0 0 320px;            /* фиксированная ширина — надёжно */
+    flex: 0 0 320px; /* фиксированная ширина — надёжно */
   }
 
   .editor-panel {
@@ -191,7 +218,7 @@
   }
 
   .preview-panel {
-    flex: 1.5;                  /* превью получает больше пространства */
+    flex: 1.5; /* превью получает больше пространства */
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -305,7 +332,8 @@
     transform: scale(1.08);
   }
 
-  select, input[type="color"] {
+  select,
+  input[type="color"] {
     background: #334155;
     color: #e2e8f0;
     border: none;
