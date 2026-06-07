@@ -2,14 +2,12 @@
   import { marked } from "marked";
   import html2canvas from "html2canvas";
 
-  // === Состояние визитки ===
   let markdown = $state(`Type here in Markdown`);
 
   let htmlContent = $derived(marked.parse(markdown));
 
   let previewRef: HTMLElement | null = $state(null);
 
-  // === Настройки оформления ===
   let selectedGradient = $state(0);
   let textColor = $state("#ffffff");
   let fontFamily = $state("system-ui, sans-serif");
@@ -51,21 +49,18 @@
     link.click();
   }
 
-  // === Интеграция с GitHub API (Стабильный вариант) ===
-  let repoStats = $state("Загрузка данных...");
+  let stars = $state("Загрузка данных...");
 
   async function fetchGitHubData() {
     try {
-      // Запрос информации о репозитории
       const response = await fetch(
-        "https://api.github.com/repos/zdertis/business-cards-generator",
+        "https://api.github.com/repos/Zdertis420/CardGen",
       );
       const data = await response.json();
 
-      // Выводим информацию из JSON (например, количество звезд или язык)
-      repoStats = `Проект на GitHub: ${data.stargazers_count} ⭐ | Язык: ${data.language}`;
+      stars = `Stars on GutHub: ${data.stargazers_count} ⭐`;
     } catch (e) {
-      repoStats = "Статус репозитория: Доступен";
+      stars = "Could not fetch";
     }
   }
 
@@ -82,11 +77,9 @@
 
   <div class="content">
     <div class="workspace">
-      <!-- ЛЕВАЯ КОЛОНКА: Настройки + кнопка -->
       <div class="panel sidebar-panel">
         <h2>Настройки оформления</h2>
         <div class="settings-content">
-          <!-- Градиенты -->
           <div>
             <div class="setting-label">Градиент фона</div>
             <div class="gradients">
@@ -103,13 +96,11 @@
             </div>
           </div>
 
-          <!-- Цвет текста -->
           <div>
             <label for="textColor">Цвет текста</label>
             <input id="textColor" type="color" bind:value={textColor} />
           </div>
 
-          <!-- Шрифт -->
           <div>
             <label for="fontFamily">Шрифт</label>
             <select id="fontFamily" bind:value={fontFamily}>
@@ -120,7 +111,6 @@
           </div>
         </div>
 
-        <!-- Кнопка экспорта -->
         <div class="sidebar-footer">
           <button onclick={exportToPNG} class="export-btn">
             💾 Запечь в PNG
@@ -128,13 +118,11 @@
         </div>
       </div>
 
-      <!-- Markdown редактор -->
       <div class="panel editor-panel">
         <h2>Markdown редактор</h2>
         <textarea bind:value={markdown} spellcheck="false"></textarea>
       </div>
 
-      <!-- Превью визитки -->
       <div class="panel preview-panel">
         <h2>Live превью</h2>
         <div class="card-wrapper">
@@ -148,11 +136,10 @@
 </div>
 
 <div class="api-footer">
-  <p>{repoStats}</p>
+  <p>{stars}</p>
 </div>
 
 <style>
-  /* Глобальный сброс */
   *,
   *::before,
   *::after {
@@ -164,14 +151,12 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    /* overflow: hidden; */
     background: #0f172a;
   }
 
   .content {
     flex: 1;
     width: 100%;
-    padding: 1rem 1.5rem; /* уменьшили, чтобы не вылезало */
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -190,11 +175,10 @@
     margin: 0;
   }
 
-  /* Основной workspace — здесь была главная проблема */
   .workspace {
     flex: 1;
     display: flex;
-    gap: 1rem; /* уменьшили gap */
+    gap: 1rem;
     overflow: hidden;
     min-height: 0;
   }
@@ -209,7 +193,7 @@
   }
 
   .sidebar-panel {
-    flex: 0 0 320px; /* фиксированная ширина — надёжно */
+    flex: 0 0 320px;
   }
 
   .editor-panel {
@@ -218,7 +202,7 @@
   }
 
   .preview-panel {
-    flex: 1.5; /* превью получает больше пространства */
+    flex: 1.5;
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -236,7 +220,6 @@
     flex-shrink: 0;
   }
 
-  /* Card wrapper и карточка */
   .card-wrapper {
     flex: 1;
     display: flex;
@@ -270,7 +253,6 @@
     hyphens: auto;
   }
 
-  /* Markdown стили внутри карточки */
   :global(.business-card h1),
   :global(.business-card h2),
   :global(.business-card h3) {
@@ -302,7 +284,6 @@
     min-height: 0;
   }
 
-  /* Настройки */
   .settings-content {
     flex: 1;
     padding: 1.25rem;
